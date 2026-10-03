@@ -1,0 +1,178 @@
+/* The First Light: stylesheet.
+   Ported from docs/reference/newspaper.html. Keep visual changes out of this file
+   unless the reference changes; additions for data-driven rendering are at the end. */
+
+/* Fonts bundled as assets (SIL Open Font License, see fonts/OFL.txt). */
+@font-face{font-family:'UnifrakturMaguntia';font-style:normal;font-weight:400;src:url(fonts/UnifrakturMaguntia-Regular.woff2) format('woff2')}
+@font-face{font-family:'Libre Caslon Text';font-style:normal;font-weight:400;src:url(fonts/LibreCaslonText-Regular.woff2) format('woff2')}
+@font-face{font-family:'Libre Caslon Text';font-style:italic;font-weight:400;src:url(fonts/LibreCaslonText-Italic.woff2) format('woff2')}
+@font-face{font-family:'Libre Caslon Text';font-style:normal;font-weight:700;src:url(fonts/LibreCaslonText-Bold.woff2) format('woff2')}
+@font-face{font-family:'Playfair Display';font-style:normal;font-weight:700;src:url(fonts/PlayfairDisplay-Bold.woff2) format('woff2')}
+@font-face{font-family:'Playfair Display';font-style:normal;font-weight:900;src:url(fonts/PlayfairDisplay-Black.woff2) format('woff2')}
+
+@media screen{html{overflow-x:hidden}}
+
+:root { --ink:#1a1a1a; --paper:#f1ede2; --rule:#1a1a1a; --faint:#777;
+  --blackletter:'UnifrakturMaguntia','Old English Text MT','Times New Roman',serif;
+  --head:'Playfair Display','Didot','Times New Roman',serif;
+  --body:'Libre Caslon Text','Times New Roman',Times,serif; }
+*{box-sizing:border-box;margin:0;padding:0}
+@page{size:A4;margin:0}
+html{background:#8a8780}
+body{font-family:var(--body);color:var(--ink);font-size:8.4pt;line-height:1.34}
+.page{width:210mm;height:297mm;margin:8mm auto;padding:9mm 10mm;background:var(--paper);overflow:hidden;position:relative;box-shadow:0 2px 12px rgba(0,0,0,.4);page-break-after:always;break-after:page}
+@media print{html{background:none}.page{margin:0;box-shadow:none;background:#fff}.page:last-child{page-break-after:auto;break-after:auto}}
+.ico{width:1em;height:1em;vertical-align:-.15em;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* masthead */
+.ears{display:flex;justify-content:space-between;align-items:stretch;gap:3mm}
+.ear{width:34mm;border:1px solid var(--rule);padding:1.5mm 2mm;text-align:center;font-size:7pt;line-height:1.25}
+.ear b{display:block;font-family:var(--head);font-size:9pt}
+.ear .ico{font-size:13pt;display:block;margin:0 auto .3mm}
+.title{flex:1;text-align:center;font-family:var(--blackletter);font-size:38pt;line-height:1.1;letter-spacing:.3pt;white-space:nowrap}
+.dateline{display:flex;justify-content:space-between;border-top:3px double var(--rule);border-bottom:1px solid var(--rule);margin-top:1.5mm;padding:.8mm 0;font-size:7.5pt;font-style:italic}
+.mini-title{font-family:var(--blackletter);font-size:24pt;text-align:center;line-height:1}
+
+/* type */
+.kicker{font-family:var(--head);font-weight:900;font-size:8pt;border-bottom:2px solid var(--rule);margin-bottom:1.5mm;padding-bottom:.4mm;letter-spacing:.3pt}
+.kicker i{font-family:var(--body);font-weight:400;font-size:7pt}
+h1{font-family:var(--head);font-weight:900;font-size:23pt;line-height:1.03;margin:1mm 0}
+h2{font-family:var(--head);font-weight:900;font-size:12.5pt;line-height:1.08;margin:.5mm 0 1mm}
+h3{font-family:var(--head);font-weight:700;font-size:9.2pt;line-height:1.12;margin:0 0 .6mm}
+.deck{font-style:italic;font-size:9pt;line-height:1.25;margin-bottom:1mm}
+.by{font-size:6.8pt;font-weight:700;margin-bottom:1.2mm}
+p{text-align:justify;hyphens:auto;-webkit-hyphens:auto;margin-bottom:1.2mm}
+.cols2{column-count:2;column-gap:4mm;column-rule:1px solid var(--rule)}
+.dropcap::first-letter{font-family:var(--head);font-weight:900;float:left;font-size:27pt;line-height:.8;padding:1px 2px 0 0}
+
+/* page 1 */
+.front{display:grid;grid-template-columns:2fr 1fr;margin-top:2.5mm;height:240mm}
+.main{padding-right:3.5mm;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:2.5mm}
+.side{padding-left:3.5mm;display:flex;flex-direction:column;justify-content:space-between;gap:3mm}
+.block+.block{border-top:3px double var(--rule);padding-top:2mm}
+.twin{display:grid;grid-template-columns:1fr 1fr}
+.twin>article:first-child{padding-right:3mm;border-right:1px solid var(--rule)}
+.twin>article:last-child{padding-left:3mm}
+.twin p{font-size:8pt}
+
+/* science lead + QR */
+.source-row{display:flex;gap:3mm;align-items:center;border-top:1px solid var(--rule);margin-top:1.5mm;padding-top:1.5mm}
+.qr{width:19mm;height:19mm;flex:none;border:1px solid var(--rule)}
+.source-row div{font-size:7pt;line-height:1.3}
+.source-row b{font-family:var(--head)}
+
+/* weather */
+.weather{border:2px solid var(--rule);padding:1.8mm 2mm}
+.weather .now{display:flex;align-items:center;gap:2mm;font-family:var(--head)}
+.weather .temp{font-size:22pt;font-weight:900;line-height:1}
+.weather .now .ico{font-size:24pt}
+.weather .now small{font-family:var(--body);font-size:7pt;line-height:1.25;margin-left:auto;text-align:right}
+.moon{display:flex;align-items:center;gap:2mm;border-top:1px solid var(--rule);margin-top:1.5mm;padding-top:1.2mm;font-size:7.2pt;line-height:1.25}
+.moon svg{width:8mm;height:8mm;flex:none}
+table.hourly{width:100%;border-collapse:collapse;margin-top:1.5mm;font-size:7pt;text-align:center}
+table.hourly th{font-family:var(--head);border-bottom:1px solid var(--rule);padding-bottom:.4mm}
+table.hourly td{padding:.6mm 0;border-bottom:1px dotted var(--faint)}
+table.hourly .ico{font-size:10pt}
+.weather .small{font-size:7pt;margin-top:1mm;font-style:italic}
+
+/* briefs (sports) */
+.brief{padding-bottom:1.6mm;margin-bottom:1.6mm;border-bottom:1px solid var(--rule)}
+.brief:last-child{border-bottom:0;margin-bottom:0}
+.brief p{margin:0;font-size:7.8pt}
+.field{font-family:var(--head);font-weight:700;font-style:italic;font-size:7pt}
+
+.footer-note{position:absolute;left:10mm;right:10mm;bottom:5mm;border-top:1px solid var(--rule);padding-top:.6mm;font-size:6.5pt;font-style:italic;display:flex;justify-content:space-between}
+
+/* page 2 */
+.row3{margin-top:2.5mm;display:grid;grid-template-columns:1fr 1fr 1fr}
+.row3>section{padding:0 3mm;border-left:1px solid var(--rule)}
+.row3>section:first-child{padding-left:0;border-left:0}
+.row3>section:last-child{padding-right:0}
+.band{margin-top:2.5mm;border-top:3px double var(--rule);padding-top:2mm}
+ul.plain{list-style:none}
+ul.plain li{padding:.9mm 0;border-bottom:1px dotted var(--faint)}
+ul.plain li:last-child{border-bottom:0}
+.time{font-family:var(--head);font-weight:700;display:inline-block;width:14mm}
+.box{display:inline-block;width:2.6mm;height:2.6mm;border:1px solid var(--ink);margin-right:1.5mm;vertical-align:-.3mm}
+.tag{font-family:var(--head);font-weight:700}
+.birthday{border:2px solid var(--rule);padding:2mm;text-align:center;margin-bottom:2mm}
+.birthday .big{font-family:var(--head);font-weight:900;font-size:13pt;line-height:1.1}
+
+/* health */
+.health{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3mm;align-items:end}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm}
+.stat{border:1px solid var(--rule);padding:1mm 1.5mm;text-align:center}
+.stat b{display:block;font-family:var(--head);font-size:13pt;line-height:1.1}
+.stat span{font-size:6.5pt;font-style:italic}
+.chart{width:100%;height:27mm;display:block}
+.cap{font-size:6.8pt;font-style:italic;text-align:center}
+
+/* messages */
+.msgs{column-count:2;column-gap:4mm;column-rule:1px solid var(--rule)}
+.msg-app{font-family:var(--head);font-weight:900;font-size:8.2pt;margin:0 0 .6mm;border-bottom:1px solid var(--rule);break-after:avoid}
+.msg-app span{font-weight:400;font-style:italic;font-size:7pt}
+.msgs .group{break-inside:auto;margin-bottom:2mm}
+.msg{padding:.6mm 0;break-inside:avoid;font-size:8pt}
+.msg b{font-family:var(--head)}
+.msg i{font-size:6.8pt;color:var(--faint)}
+
+/* comic */
+.comic{border:1px solid var(--rule);height:50mm;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,#e6e1d3,#e6e1d3 4px,#efebdf 4px,#efebdf 8px);font-style:italic;color:var(--faint)}
+.comic-cap{font-size:6.8pt;font-style:italic;margin-top:.8mm;text-align:center}
+
+.wstrip{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--rule);padding:.8mm 0;margin-bottom:2.5mm;font-size:7pt}
+.wstrip span{display:inline-flex;align-items:center;gap:.8mm}
+.wstrip .ico{font-size:10pt}
+.cols3{column-count:3;column-gap:4mm;column-rule:1px solid var(--rule)}
+h1.big{font-size:28pt}
+.qr-end{break-inside:avoid;margin-top:1.5mm}
+.qr-end .qr{width:17mm;height:17mm;display:block}
+.news{display:grid;grid-template-columns:1fr 1fr;margin-top:2.5mm;border-top:3px double var(--rule);padding-top:2mm}
+.news>div:first-child{padding-right:3mm;border-right:3px double var(--rule)}
+.news>div:last-child{padding-left:3mm}
+.news .twin p{font-size:8pt}
+.scores{margin-top:2.5mm;border-top:3px double var(--rule);padding-top:2mm}
+.scores .list{column-count:2;column-gap:4mm;column-rule:1px solid var(--rule)}
+.scores .row{break-inside:avoid;padding:.8mm 0;border-bottom:1px dotted var(--faint);font-size:8pt}
+.scores .row b{font-family:var(--head)}
+#fitwarn{position:fixed;top:4px;left:4px;z-index:9;background:#b00020;color:#fff;font:12px sans-serif;padding:4px 8px;display:none}
+@media print{#fitwarn{display:none!important}}
+
+.ears{align-items:stretch}
+.ear{width:30mm;display:flex;flex-direction:column;justify-content:center}
+.title{min-width:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:60pt;line-height:1;white-space:nowrap}
+.title span{display:inline-block;padding-bottom:1.5mm}
+.cols3 p{font-size:9pt}
+.news .twin p{font-size:8.6pt}
+.comic{height:38mm}
+.scores.band{margin-top:2.5mm}
+
+@page{size:210mm 297mm;margin:0}
+@media print{html,body{width:210mm;margin:0;padding:0;background:none}.page{margin:0!important;width:210mm;height:297mm}}
+.page{flex:none}
+#page-1{display:flex;flex-direction:column}
+#page-1 .news{flex:1;min-height:0;overflow:hidden}
+#page-1 .news>div{min-height:0}
+
+/* ---- additions for data-driven rendering ---- */
+
+/* Android's ISO_A4 paper is 8270 x 11690 mils (296.93 mm tall), a hair shorter than
+   297 mm. A 297 mm .page would spill a sliver onto an extra PDF page, so the page box
+   is 296.9 mm on screen and in print (same layout for measuring and printing). */
+:root{--page-h:296.9mm}
+.page{height:var(--page-h)}
+@media print{.page{height:var(--page-h)}}
+
+.birthday .when{font-size:7pt;font-style:italic}
+img.qr{background:#fff}
+.comic img{display:block;max-width:100%;max-height:100%;object-fit:contain}
+.comic.has-image{background:none}
+.news.single{grid-template-columns:1fr}
+.news.single>div:first-child{padding-right:0;border-right:0}
+.twin.single{grid-template-columns:1fr}
+.twin.single>article:first-child{padding-right:0;border-right:0}
+.row3.cols-2{grid-template-columns:1fr 1fr}
+.row3.cols-1{grid-template-columns:1fr}
+.chart .nodata{font-style:italic}
+svg.sprites{position:absolute;width:0;height:0;overflow:hidden}
+[hidden]{display:none!important}

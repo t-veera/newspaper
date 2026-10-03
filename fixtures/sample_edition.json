@@ -1,0 +1,314 @@
+{
+  "masthead": {
+    "name": "The First Light",
+    "date": "2026-10-03",
+    "volume": 1,
+    "number": 276,
+    "place": "Hyderabad",
+    "printedAt": "06:00"
+  },
+  "footer": {
+    "publicNote": "Public edition: science, news, sports and weather only. Sample data.",
+    "privateNote": "Private edition: generated on-device. Not for sharing. Sample data."
+  },
+  "weather": {
+    "tempC": 29,
+    "condition": "Partly cloudy",
+    "icon": "part",
+    "highC": 31,
+    "lowC": 21,
+    "hourly": [
+      {
+        "hour": "06",
+        "icon": "sun",
+        "tempC": 22
+      },
+      {
+        "hour": "09",
+        "icon": "sun",
+        "tempC": 26
+      },
+      {
+        "hour": "12",
+        "icon": "part",
+        "tempC": 30
+      },
+      {
+        "hour": "15",
+        "icon": "cloud",
+        "tempC": 31,
+        "precipPct": 20
+      },
+      {
+        "hour": "18",
+        "icon": "rain",
+        "tempC": 28,
+        "precipPct": 45
+      },
+      {
+        "hour": "21",
+        "icon": "cloud",
+        "tempC": 25,
+        "precipPct": 30
+      }
+    ],
+    "sunrise": "06:02",
+    "sunset": "17:51",
+    "uvIndex": 8,
+    "moon": {
+      "phaseName": "Last Quarter",
+      "phase": 0.75,
+      "illuminationPct": 50,
+      "moonrise": "23:48"
+    }
+  },
+  "science": {
+    "headline": "Physicists Detect the Magnetic Whisper of a Single Living Cell",
+    "deck": "A diamond-based sensor picked up signals a thousand times fainter than any earlier lab instrument, opening a path to scanning tissue without dyes or probes.",
+    "paragraphs": [
+      "A team of physicists has measured the tiny magnetic field produced by ion currents inside a single living cell, a signal long thought too faint to catch at room temperature. The sensor relies on defects in synthetic diamond whose quantum properties shift in the presence of a magnetic field, and it sits within a few micrometres of the cell.",
+      "In tests on cultured nerve cells, the device tracked firing patterns as they happened, without damaging the cell and without chemical labels. Earlier methods usually required cooling to extreme temperatures or fluorescent dyes, both of which can disturb the sample being studied.",
+      "The measured signals were roughly a thousand times weaker than the faintest magnetic fields recorded in earlier lab setups, according to the authors. They checked the readings against standard electrical recordings from the same cells, and the two agreed closely on timing.",
+      "The team says the approach could eventually map activity across thin slices of tissue, giving researchers a label-free view of how networks of cells communicate. They caution that the current setup handles one cell at a time, and that scaling it up is the main open problem.",
+      "The paper has been accepted by a peer-reviewed physics journal and is not yet in print. Outside experts have not yet commented on the result."
+    ],
+    "sourceUrl": "https://example.org/science/single-cell-magnetometry"
+  },
+  "news": {
+    "india": [
+      {
+        "headline": "Monsoon Withdrawal Begins Early Across the Deccan",
+        "source": "The Hindu",
+        "text": "The weather office said the southwest monsoon began retreating from parts of Telangana and Karnataka on Friday, about five days ahead of its long-term schedule. Officials said a drier air mass over central India is behind the change, and scattered showers may continue along the coast. Reservoir levels in the Krishna and Godavari basins remain above the ten-year average, and water boards expect no urban supply restrictions before next summer. Farmers have been advised to finish harvesting early-sown crops before the weekend, while soil moisture is adequate for the coming rabi sowing season. Meteorologists will release the post-monsoon outlook next week."
+      },
+      {
+        "headline": "Metro Corridor Extension Gets Final Clearance",
+        "source": "Indian Express",
+        "text": "The state cabinet approved the final phase of the metro corridor linking the airport road to the new financial district. Construction is scheduled to begin in January, with a projected completion window of thirty months. Tenders will be published within three weeks, officials said. Commuter groups welcomed the decision but asked for clearer timelines on station accessibility features, including lifts and tactile paths. The extension adds nine stations and is expected to carry about two lakh riders a day once fully open, according to the project report. The line will run partly underground through the old city, where utility shifting is the biggest risk to the schedule. A dedicated team will coordinate with the water and power boards, and traffic diversions will be announced two weeks before work starts at each site."
+      }
+    ],
+    "world": [
+      {
+        "headline": "Climate Talks Close With Modest Funding Pledge",
+        "source": "BBC",
+        "text": "Delegates from more than 140 countries closed a week of climate talks on Friday with a pledge to expand a shared adaptation fund. Developing nations said the sum falls short of earlier commitments, while host officials called it a workable first step. The deal sets a framework for reporting progress but defers binding emissions targets to next year. A follow-up session is planned for spring, where binding language is expected to return to the agenda. Observers noted that several large emitters sought softer wording on timelines. Small island states, who pushed hardest for the fund, said they will keep negotiating for direct access to money rather than routing it through large institutions. Host officials said the first payments could reach projects within a year, depending on how quickly donor governments approve their share."
+      },
+      {
+        "headline": "Central Banks Hold Rates as Inflation Cools",
+        "source": "The Guardian",
+        "text": "Policymakers in three large economies left interest rates unchanged this week, citing a steady decline in consumer price growth. Investors responded with a calm session, and bond yields moved only slightly. Officials said they would keep watching wages and energy costs before considering any cuts. Economists expect the pause to continue through year-end unless energy prices move sharply. One bank noted that services inflation remains above target and warned that progress could stall. Currency markets were little changed. Analysts said the decisions point to a more cautious approach than markets had priced in earlier this year, when several traders expected cuts by autumn. Stock indices ended the week slightly higher, led by technology and utility shares, while oil prices edged lower on weaker demand forecasts."
+      }
+    ]
+  },
+  "sports": [
+    {
+      "sport": "Football",
+      "text": "Your Club 2–1 Visitors. Goals: Rao 34', Mehta 88'; Cole 12'."
+    },
+    {
+      "sport": "Cricket",
+      "text": "India 286/6 beat Visitors 284/8 by 4 wickets. Top score: Sharma 94."
+    },
+    {
+      "sport": "Tennis",
+      "text": "Your Player d. Opponent 6–3, 6–4. Semifinal next."
+    },
+    {
+      "sport": "F1 qualifying",
+      "text": "1 Alvarez, 2 Brandt, 3 Okafor."
+    },
+    {
+      "sport": "Badminton",
+      "text": "India pair d. Visitors 21–17, 19–21, 21–18."
+    }
+  ],
+  "schedule": [
+    {
+      "time": "08:30",
+      "title": "Standup with product team"
+    },
+    {
+      "time": "10:00",
+      "title": "Vendor call: sensor supplier"
+    },
+    {
+      "time": "12:30",
+      "title": "Lunch with Anu"
+    },
+    {
+      "time": "14:00",
+      "title": "Prototype review (lab)"
+    },
+    {
+      "time": "16:30",
+      "title": "Football practice"
+    },
+    {
+      "time": "19:00",
+      "title": "Family dinner"
+    }
+  ],
+  "tasks": [
+    {
+      "text": "Send revised quote to client"
+    },
+    {
+      "text": "Back up lab notes"
+    },
+    {
+      "text": "Order solder wire"
+    },
+    {
+      "text": "Call electrician"
+    },
+    {
+      "text": "Write Sunday draft"
+    },
+    {
+      "text": "Pack kit bag"
+    }
+  ],
+  "birthdays": [
+    {
+      "name": "Meera",
+      "whenLabel": "Today"
+    }
+  ],
+  "renewals": [
+    {
+      "whenLabel": "Today",
+      "text": "Cloud storage, annual"
+    },
+    {
+      "whenLabel": "In 4 days",
+      "text": "Domain: example.in"
+    },
+    {
+      "whenLabel": "In 9 days",
+      "text": "Music streaming"
+    }
+  ],
+  "health": {
+    "source": "Garmin",
+    "dateLabel": "2 October",
+    "restingHr": 58,
+    "avgHr": 71,
+    "avgStress": 34,
+    "peakStress": 78,
+    "peakStressTime": "14:00",
+    "totalKcal": 2340,
+    "activeKcal": 610,
+    "hrTwoHourly": [
+      56,
+      54,
+      60,
+      72,
+      78,
+      70,
+      76,
+      92,
+      88,
+      74,
+      66,
+      60
+    ],
+    "stressTwoHourly": [
+      18,
+      15,
+      22,
+      40,
+      52,
+      38,
+      60,
+      78,
+      55,
+      36,
+      28,
+      20
+    ]
+  },
+  "messages": [
+    {
+      "app": "WhatsApp",
+      "sender": "Anu",
+      "time": "22:14",
+      "text": "Running 10 min late tomorrow, can you order for me? Same as last time."
+    },
+    {
+      "app": "WhatsApp",
+      "sender": "Dad",
+      "time": "22:40",
+      "text": "Landlord called again. He wants to know the date by Monday."
+    },
+    {
+      "app": "WhatsApp",
+      "sender": "Dad",
+      "time": "22:41",
+      "text": "I told him we will confirm after the weekend."
+    },
+    {
+      "app": "WhatsApp",
+      "sender": "Team Chat",
+      "time": "23:05",
+      "text": "Meera: Build passed on staging. Deploy window opens at 10."
+    },
+    {
+      "app": "WhatsApp",
+      "sender": "Priya",
+      "time": "06:12",
+      "text": "Photos from last week are up. Tag yourself before I post them."
+    },
+    {
+      "app": "WhatsApp",
+      "sender": "Football Squad",
+      "time": "06:30",
+      "text": "Coach: Practice is at 16:30 sharp. Bring both kits."
+    },
+    {
+      "app": "WhatsApp",
+      "sender": "Meera",
+      "time": "06:44",
+      "text": "Dinner tonight is still on? Mum is making the biryani."
+    },
+    {
+      "app": "Signal",
+      "sender": "Ravi",
+      "time": "21:50",
+      "text": "Sent the schematic file. Check rev C, the pin map changed."
+    },
+    {
+      "app": "Signal",
+      "sender": "Mesh Group",
+      "time": "05:58",
+      "text": "Node 4 is back online after the battery swap."
+    },
+    {
+      "app": "Telegram",
+      "sender": "Makers Hub",
+      "time": "20:15",
+      "text": "Workshop moved to Sunday 11:00. Same room."
+    },
+    {
+      "app": "Telegram",
+      "sender": "Kiran",
+      "time": "21:02",
+      "text": "Check this firmware release. The radio fix you wanted is in."
+    },
+    {
+      "app": "Telegram",
+      "sender": "Kiran",
+      "time": "21:03",
+      "text": "Changelog is short, worth a read before flashing."
+    },
+    {
+      "app": "Telegram",
+      "sender": "Leather Crafts",
+      "time": "06:20",
+      "text": "New thread: edge finishing tips for thick veg-tan."
+    }
+  ],
+  "comic": {
+    "title": "CALVIN AND HOBBES",
+    "altText": "[ Comic strip image goes here: fetched daily, strip chosen in Settings ]"
+  }
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder launcher icon: a folded newspaper on cream. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#F1EDE2" android:pathData="M0,0h48v48h-48z" />
+    <path android:fillColor="#1A1A1A" android:pathData="M10,11h28v3h-28z" />
+    <path android:fillColor="#1A1A1A" android:pathData="M10,16h28v1h-28z" />
+    <path android:fillColor="#1A1A1A" android:pathData="M10,20h17v15h-17z" />
+    <path android:fillColor="#1A1A1A" android:pathData="M29,20h9v1.5h-9zM29,24h9v1.5h-9zM29,28h9v1.5h-9zM29,32h9v1.5h-9zM10,37h28v1.5h-28z" />
+</vector>
