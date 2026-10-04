@@ -27,7 +27,14 @@ import java.time.LocalDate
  */
 class GoComicsFetcher(private val context: Context) {
 
-    suspend fun imageUrl(stripId: String, date: LocalDate): String = withContext(Dispatchers.Main) {
+    /** A strip image and the date of the page it came from. */
+    data class Strip(val imageUrl: String, val date: LocalDate)
+
+    /**
+     * The strip on [date]'s page. GoComics publishes around midnight US time (mid-morning in India) and
+     * redirects a date that is not out yet to its newest strip, so the returned date may be earlier.
+     */
+    suspend fun strip(stripId: String, date: LocalDate): Strip = withContext(Dispatchers.Main) {
         val page = "https://www.gocomics.com/$stripId/${date.year}/%02d/%02d".format(date.monthValue, date.dayOfMonth)
         val web = create()
         try {
@@ -39,7 +46,8 @@ class GoComicsFetcher(private val context: Context) {
                     found = evaluate(web, FIND_IMAGE).takeIf { it.startsWith("https://") && isAllowed(it) }.orEmpty()
                 }
             }
-            found
+            // The page title and image arrive together; the URL is corrected to the strip's date only later.
+            Strip(found, titleDate(evaluate(web, OG_TITLE)) ?: pageDate(evaluate(web, "location.href")) ?: date)
         } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
             throw IOException("GoComics page did not load (browser check or no strip for $date)")
         } finally {
@@ -63,6 +71,8 @@ class GoComicsFetcher(private val context: Context) {
             javaScriptCanOpenWindowsAutomatically = false
             setSupportMultipleWindows(false)
         }
+        // Offscreen (the scheduled edition) the renderer would drop to background priority and the browser check stalls.
+        setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, false)
         CookieManager.getInstance().setAcceptThirdPartyCookies(this, false)
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest) =
@@ -85,14 +95,31 @@ class GoComicsFetcher(private val context: Context) {
     }
 
     companion object {
-        private const val TIMEOUT_MS = 30_000L
+        private const val TIMEOUT_MS = 45_000L
         val DOMAINS = setOf("gocomics.com", "amuniversal.com")
         private val pageHosts = DOMAINS + "challenges.cloudflare.com"
+
+        private val datedPath = Regex("/(\\d{4})/(\\d{2})/(\\d{2})(?:[/?#]|$)")
+
+        /** The date in a strip page URL ("…/calvinandhobbes/2026/10/03"), or null. */
+        fun pageDate(url: String): LocalDate? = datedPath.find(url)?.destructured?.let { (y, m, d) ->
+            runCatching { LocalDate.of(y.toInt(), m.toInt(), d.toInt()) }.getOrNull()
+        }
+
+        private val titledDate = Regex("for (\\p{L}+ \\d{1,2}, \\d{4})")
+        private val titleFormat = java.time.format.DateTimeFormatter.ofPattern("MMMM d, yyyy", java.util.Locale.ENGLISH)
+
+        /** The date in a strip page title ("Calvin and Hobbes by Bill Watterson for October 3, 2026 | GoComics"), or null. */
+        fun titleDate(title: String): LocalDate? = titledDate.find(title)?.groupValues?.get(1)?.let {
+            runCatching { LocalDate.parse(it, titleFormat) }.getOrNull()
+        }
 
         fun isAllowed(url: String): Boolean {
             val u = runCatching { java.net.URL(url) }.getOrNull() ?: return false
             return u.protocol == "https" && pageHosts.any { u.host == it || u.host.endsWith(".$it") }
         }
+
+        private const val OG_TITLE = """(function(){var m=document.querySelector('meta[property="og:title"]');return m&&m.content||document.title;})()"""
 
         /** The strip is the og:image of a dated strip page; fall back to the first strip-CDN image. */
         private const val FIND_IMAGE = """(function(){

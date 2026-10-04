@@ -16,7 +16,7 @@ class GoComicsTest {
     fun fetchesCalvinAndHobbes() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
         val http = app.newspaper.net.Http(app.newspaper.source.feeds.Comics.DOMAINS)
-        val comic = runBlocking { ComicFeed(context, http, "gocomics:calvinandhobbes").comic(LocalDate.now()) }
+        val comic = runBlocking { ComicFeed(context, http, app.newspaper.net.FeedCache(java.io.File(context.cacheDir, "test-feeds")), "gocomics:calvinandhobbes").comic(LocalDate.now()) }
         assertTrue(comic.imageDataUri!!.startsWith("data:image/"))
         android.util.Log.i("GoComicsTest", "image data URI ${comic.imageDataUri!!.length} chars")
     }

@@ -6,6 +6,8 @@ import app.newspaper.net.Http
 import app.newspaper.source.feeds.ArticleText
 import app.newspaper.source.feeds.Comics
 import app.newspaper.source.feeds.FeedItem
+import app.newspaper.source.feeds.GoComicsFetcher
+import app.newspaper.source.feeds.NewsRules
 import app.newspaper.source.feeds.Rss
 import app.newspaper.source.feeds.ScienceRules
 import app.newspaper.source.feeds.ScienceSummary
@@ -162,6 +164,17 @@ class FeedsTest {
         assertEquals(listOf("Neurons fire", "Quantum dots", "Galaxy survey"),
             ScienceRules.rankByInterest(items, listOf("neuroscience", " Quantum")).map { it.title })
         assertEquals(items, ScienceRules.rankByInterest(items, listOf("", " ")))
+        // Interests typed without a comma still match word by word.
+        val fossils = listOf(item("Lung macrophages"), item("Denisovan tooth found in Laos"))
+        assertEquals("Denisovan tooth found in Laos", ScienceRules.rankByInterest(fossils, listOf("fossils denisovans ")).first().title)
+    }
+
+    @Test
+    fun indiaColumnSkipsWorldDesks() {
+        fun item(link: String) = FeedItem("t", link, "", null)
+        assertFalse(NewsRules.isIndiaStory(item("https://timesofindia.indiatimes.com/world/middle-east/flydubai/articleshow/1.cms")))
+        assertFalse(NewsRules.isIndiaStory(item("https://thefederal.com/category/international/debris-field")))
+        assertTrue(NewsRules.isIndiaStory(item("https://timesofindia.indiatimes.com/india/journalists-must-be-allowed/articleshow/2.cms")))
     }
 
     @Test
@@ -234,5 +247,15 @@ class FeedsTest {
         val done = live.copy(strStatus = "FT", intHomeScore = "2")
         assertEquals("Manchester United WFC 2\u20130 Liverpool FC Women.",
             ScoreRules.line(team, listOf(old), listOf(done), now.plusSeconds(4 * 3600), zone)!!.text)
+    }
+
+    @Test
+    fun goComicsPageDateRevealsARedirectToAnEarlierStrip() {
+        assertEquals(LocalDate.of(2026, 10, 3), GoComicsFetcher.pageDate("https://www.gocomics.com/calvinandhobbes/2026/10/03"))
+        assertEquals(LocalDate.of(2026, 10, 3), GoComicsFetcher.pageDate("https://www.gocomics.com/calvinandhobbes/2026/10/03?ref=x"))
+        assertNull(GoComicsFetcher.pageDate("https://www.gocomics.com/calvinandhobbes"))
+        assertEquals(LocalDate.of(2026, 10, 4),
+            GoComicsFetcher.titleDate("Calvin and Hobbes by Bill Watterson for October 4, 2026 | GoComics"))
+        assertNull(GoComicsFetcher.titleDate("GoComics"))
     }
 }

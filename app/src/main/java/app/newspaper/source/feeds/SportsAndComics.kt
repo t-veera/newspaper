@@ -1,6 +1,7 @@
 package app.newspaper.source.feeds
 
 import app.newspaper.model.Comic
+import app.newspaper.net.FeedCache
 import app.newspaper.net.Http
 import app.newspaper.source.ComicSource
 import kotlinx.serialization.Serializable
@@ -57,7 +58,12 @@ object Comics {
 }
 
 /** Fetches the strip image in Kotlin and hands it to the template as a data URI. */
-class ComicFeed(private val context: android.content.Context, private val http: Http, private val stripId: String) : ComicSource {
+class ComicFeed(
+    private val context: android.content.Context,
+    private val http: Http,
+    private val cache: FeedCache,
+    private val stripId: String,
+) : ComicSource {
 
     @Serializable private data class Xkcd(val img: String, val alt: String = "", val safe_title: String = "")
 
@@ -66,9 +72,14 @@ class ComicFeed(private val context: android.content.Context, private val http: 
     override suspend fun comic(date: LocalDate): Comic {
         val strip = Comics.byId(stripId)
         strip.goComicsSlug?.let { slug ->
-            val img = GoComicsFetcher(context).imageUrl(slug, date)
-            val bytes = http.get(img, mapOf("Referer" to "https://www.gocomics.com/"))
-            return Comic(title = strip.name.uppercase(), imageDataUri = Comics.dataUri(bytes), altText = "${strip.name}, $date")
+            val fetcher = GoComicsFetcher(context)
+            val key = "comic-$slug"
+            var found = fetcher.strip(slug, date)
+            // Today's strip is not out yet and the newest one already ran in an earlier edition: print the one before it.
+            if (found.date.toString() in cache.printedBefore(key, date)) found = fetcher.strip(slug, found.date.minusDays(1))
+            val bytes = http.get(found.imageUrl, mapOf("Referer" to "https://www.gocomics.com/"))
+            cache.markPrinted(key, date, found.date.toString())
+            return Comic(title = strip.name.uppercase(), imageDataUri = Comics.dataUri(bytes), altText = "${strip.name}, ${found.date}")
         }
         if (strip.id == Comics.XKCD) {
             val x = json.decodeFromString(Xkcd.serializer(), http.getText("https://xkcd.com/info.0.json"))

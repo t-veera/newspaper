@@ -31,6 +31,10 @@ object Journals {
             isPaper = { !it.summary.contains("Announce Type: replace") }, abstractInFeed = true),
         ScienceJournal("sciencedaily", "ScienceDaily", "https://www.sciencedaily.com/rss/top/science.xml", setOf("sciencedaily.com"),
             bodyIsStory = true),
+        ScienceJournal("sciencedaily-fossils", "ScienceDaily: Fossils & Ruins", "https://www.sciencedaily.com/rss/fossils_ruins.xml",
+            setOf("sciencedaily.com"), bodyIsStory = true),
+        ScienceJournal("sciencedaily-early-humans", "ScienceDaily: Early Humans",
+            "https://www.sciencedaily.com/rss/fossils_ruins/early_humans.xml", setOf("sciencedaily.com"), bodyIsStory = true),
     )
 
     fun byId(id: String?) = all.firstOrNull { it.id == id } ?: all.first()
@@ -74,15 +78,20 @@ object ScienceRules {
 
     /** The deck is the RSS summary's first sentence when it says something the abstract does not open with. */
     /**
-     * Orders papers by how many interest topics their title and summary mention (case-insensitive,
-     * whole words or phrases), newest first among equals. No interests keeps feed order.
+     * Orders papers by how many interests their title and summary mention (case-insensitive, word
+     * starts), newest first among equals. A whole phrase counts double, and each of its words (singular)
+     * also counts, so "fossils denisovans" typed without a comma still finds either. No interests keeps feed order.
      */
     fun rankByInterest(items: List<FeedItem>, interests: List<String>): List<FeedItem> {
         val topics = interests.map { it.trim().lowercase() }.filter { it.length >= 3 }
         if (topics.isEmpty()) return items
+        // Matching is by word start, so "denisovans" is cut to "denisovan" to find the singular too.
+        val words = topics.flatMap { it.split(Regex("\\s+")) }.filter { it.length >= 4 }
+            .map { it.removeSuffix("s") }.distinct() - topics.toSet()
         fun score(i: FeedItem): Int {
             val text = (i.title + " " + i.summary).lowercase()
-            return topics.count { t -> Regex("\\b" + Regex.escape(t)).containsMatchIn(text) }
+            fun has(t: String) = Regex("\\b" + Regex.escape(t)).containsMatchIn(text)
+            return 2 * topics.count(::has) + words.count(::has)
         }
         return items.withIndex().sortedWith(compareBy({ -score(it.value) }, { it.index })).map { it.value }
     }
@@ -124,10 +133,11 @@ class ScienceFeed(
     private suspend fun abstractOf(item: FeedItem): String? {
         if (journal.abstractInFeed) return ScienceRules.arxivAbstract(item.summary)
         val html = runCatching { http.getText(item.link) }.getOrNull() ?: return item.summary.ifBlank { null }
+        // A press release's own "abstract" is a two-line teaser; the story is the body.
+        if (journal.bodyIsStory) ArticleText.paragraphs(html, item.link).takeIf { it.isNotEmpty() }?.let { return ArticleText.trimWords(it, 260) }
+        // Never print a paper's body: it runs into figures and reference lists.
         return ArticleText.section(html, "#Abs1-content", "section[aria-labelledby=Abs1]", "div.abstract", "section.abstract",
             "#abstract", "[class*=abstract-content]", "blockquote.abstract")
             ?: ArticleText.meta(html, "citation_abstract", "dc.description", "DC.description")
-            ?: if (journal.bodyIsStory) ArticleText.paragraphs(html, item.link).takeIf { it.isNotEmpty() }?.let { ArticleText.trimWords(it, 260) }
-            else null // never print a paper's body: it runs into figures and reference lists
     }
 }

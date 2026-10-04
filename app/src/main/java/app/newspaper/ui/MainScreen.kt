@@ -98,7 +98,7 @@ fun MainScreen(activity: Activity, onSettings: () -> Unit) {
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     var busy by remember { mutableStateOf(false) }
-    var warnings by rememberSaveable { mutableStateOf(listOf<String>()) }
+    var warnings by rememberSaveable { mutableStateOf(TodayEdition.notes(TodayEdition.latest(activity))) }
     var error by rememberSaveable { mutableStateOf<String?>(null) }
     var pdfPath by rememberSaveable { mutableStateOf(TodayEdition.latest(activity)?.path) }
     var version by rememberSaveable { mutableIntStateOf(0) }

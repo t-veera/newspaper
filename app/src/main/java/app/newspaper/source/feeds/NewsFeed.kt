@@ -23,9 +23,18 @@ data class Outlet(
 
 object Outlets {
     val all = listOf(
+        // Independent outlets first.
+        Outlet("scroll", "Scroll", Region.INDIA, "https://feeds.feedburner.com/ScrollinArticles.rss", setOf("feedburner.com", "scroll.in")),
+        Outlet("the-news-minute", "The News Minute", Region.INDIA, "https://www.thenewsminute.com/stories.rss", setOf("thenewsminute.com")),
+        Outlet("south-first", "South First", Region.INDIA, "https://thesouthfirst.com/feed/", setOf("thesouthfirst.com")),
+        Outlet("siasat", "Siasat", Region.INDIA, "https://www.siasat.com/feed/", setOf("siasat.com")),
+        Outlet("the-federal", "The Federal", Region.INDIA, "https://thefederal.com/feed", setOf("thefederal.com")),
+        Outlet("the-quint", "The Quint", Region.INDIA, "https://www.thequint.com/stories.rss", setOf("thequint.com")),
+        Outlet("frontline", "Frontline", Region.INDIA, "https://frontline.thehindu.com/feeder/default.rss", setOf("thehindu.com")),
         Outlet("the-hindu", "The Hindu", Region.INDIA, "https://www.thehindu.com/news/national/feeder/default.rss", setOf("thehindu.com")),
         Outlet("indian-express", "Indian Express", Region.INDIA, "https://indianexpress.com/section/india/feed/", setOf("indianexpress.com")),
-        Outlet("times-of-india", "Times of India", Region.INDIA, "https://timesofindia.indiatimes.com/rssfeedstopstories.cms", setOf("indiatimes.com")),
+        // The India section; the top-stories feed mixes in world news.
+        Outlet("times-of-india", "Times of India", Region.INDIA, "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms", setOf("indiatimes.com")),
         Outlet("hindustan-times", "Hindustan Times", Region.INDIA, "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml", setOf("hindustantimes.com")),
         Outlet("the-print", "ThePrint", Region.INDIA, "https://theprint.in/category/india/feed/", setOf("theprint.in")),
         Outlet("ndtv", "NDTV", Region.INDIA, "https://feeds.feedburner.com/ndtvnews-top-stories", setOf("feedburner.com", "ndtv.com")),
@@ -53,6 +62,11 @@ object NewsRules {
             "morning brief|evening brief|top headlines|quiz|horoscope|crossword|sudoku|wordle|podcast|newsletter)\\b|^live\\b")
 
     fun isStory(item: FeedItem) = !notAStory.containsMatchIn(item.title)
+
+    /** Outlets' world desks, kept out of the India column. */
+    private val foreignDesk = Regex("(?i)/(world|international|global|foreign|nri)/")
+
+    fun isIndiaStory(item: FeedItem) = !foreignDesk.containsMatchIn(java.net.URI(item.link).path.orEmpty())
 
     /** Two headlines are about the same event when they share 3+ significant words (or 2 of a short headline). */
     fun sameStory(a: String, b: String): Boolean {
@@ -113,21 +127,26 @@ class NewsFeed(
 
     override suspend fun news(date: LocalDate): News = coroutineScope {
         // Every outlet's feed first, so each story can be compared against the others for "trending".
-        val outlets = india + world
+        // Every outlet of the chosen regions is read, so "trending" means what that region's press is carrying now.
+        val chosen = (india + world).toSet()
+        val outlets = Outlets.all.filter { o -> chosen.any { it.region == o.region } }
         val feeds = outlets.map { o ->
-            async { runCatching { Rss.parse(http.getText(o.rss)) }.onFailure { synchronized(failed) { failed += o.name } }.getOrNull() }
+            async {
+                runCatching { Rss.parse(http.getText(o.rss)) }
+                    .onFailure { if (o in chosen) synchronized(failed) { failed += o.name } }.getOrNull()
+            }
         }.map { it.await() }
         val loaded = outlets.zip(feeds).filter { it.second != null }.associate { it.first to it.second!! }
         fun ranked(o: Outlet, topics: List<String>): List<FeedItem> {
-            val items = loaded[o] ?: return emptyList()
-            return NewsRules.rank(items, loaded.filterKeys { it != o }.values.toList(), topics, skip)
+            val items = loaded[o]?.filter { o.region != Region.INDIA || NewsRules.isIndiaStory(it) } ?: return emptyList()
+            return NewsRules.rank(items, loaded.filterKeys { it != o && it.region == o.region }.values.toList(), topics, skip)
         }
         // Slots are filled one at a time so no story is printed twice, even from different outlets.
-        val chosen = mutableListOf<String>()
+        val printed = mutableListOf<String>()
         suspend fun fill(slots: List<Outlet>, topics: List<String>) = slots.mapNotNull { o ->
-            val candidates = ranked(o, topics).filter { c -> chosen.none { NewsRules.sameStory(it, c.title) } }
+            val candidates = ranked(o, topics).filter { c -> printed.none { NewsRules.sameStory(it, c.title) } }
             runCatching { story(o, candidates, date) }.onFailure { synchronized(failed) { failed += o.name } }.getOrNull()
-                ?.also { chosen += it.headline }
+                ?.also { printed += it.headline }
         }
         val news = News(india = fill(india, indiaTopics), world = fill(world, worldTopics))
         if (news.india.isEmpty() && news.world.isEmpty()) throw IOException("All news feeds failed")

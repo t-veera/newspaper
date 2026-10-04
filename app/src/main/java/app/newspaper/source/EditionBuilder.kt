@@ -88,7 +88,7 @@ class EditionBuilder(
         val journal = Journals.byId(settings.scienceJournal)
         val secrets = SecretStore(context)
         val apiKey = secrets.get(SecretStore.ANTHROPIC_API_KEY)
-        val domains = WeatherFeed.DOMAINS + (india + world).flatMap { it.domains } + journal.domains +
+        val domains = WeatherFeed.DOMAINS + Outlets.all.flatMap { it.domains } + journal.domains +
             TheSportsDb.DOMAINS + Comics.DOMAINS + ScienceSummary.DOMAINS + GarminClient.DOMAINS
         val http = Http(domains)
         val slowHttp = Http(ScienceSummary.DOMAINS, timeoutMs = AI_TIMEOUT_MS.toInt())
@@ -137,7 +137,7 @@ class EditionBuilder(
             messages = messages,
             comic = object : ComicSource {
                 override suspend fun comic(date: LocalDate) =
-                    cached("comic", "Comic", Comic.serializer()) { ComicFeed(context, http, settings.comic).comic(date) }
+                    cached("comic", "Comic", Comic.serializer()) { ComicFeed(context, http, cache, settings.comic).comic(date) }
             },
         )
         val footer = Footer(

@@ -27,6 +27,12 @@ object TodayEdition {
         directory(context).listFiles { f -> f.name.startsWith("first-light-") && f.name.endsWith(".pdf") }
             ?.maxByOrNull { it.name }
 
+    /** Warnings from the run that made [pdf], kept beside it so scheduled runs can be reviewed in the app. */
+    fun notes(pdf: File?): List<String> =
+        pdf?.let(::notesFile)?.takeIf { it.exists() }?.readLines()?.filter { it.isNotBlank() }.orEmpty()
+
+    private fun notesFile(pdf: File) = File(pdf.path.removeSuffix(".pdf") + ".notes")
+
     /** With an [activity] the WebView is attached to its window; without one it renders detached. */
     suspend fun generate(context: Context, activity: Activity? = null): RenderResult {
         val app = context.applicationContext
@@ -36,8 +42,12 @@ object TodayEdition {
         val assembled = EditionBuilder(app, settings, fixture).build(now)
         val renderer = if (activity != null) EditionPdfRenderer(activity) else EditionPdfRenderer(app)
         val result = renderer.render(assembled.edition, file(app, now.toLocalDate()))
-        withContext(Dispatchers.IO) { prune(app, now.toLocalDate()) }
-        return RenderResult(result.pdf, result.layout, result.pageCount, result.elapsedMs, assembled.warnings + result.warnings)
+        val warnings = assembled.warnings + result.warnings
+        withContext(Dispatchers.IO) {
+            notesFile(result.pdf).writeText(warnings.joinToString("\n"))
+            prune(app, now.toLocalDate())
+        }
+        return RenderResult(result.pdf, result.layout, result.pageCount, result.elapsedMs, warnings)
     }
 
     private fun prune(context: Context, today: LocalDate) {

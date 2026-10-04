@@ -13,6 +13,9 @@
     <!-- Daily edition at the chosen time; user-granted on Android 12+, inexact without it. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- The scheduled edition runs as a short foreground service so it keeps network access while the phone is idle. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
         android:allowBackup="false"
@@ -48,6 +51,11 @@
         <receiver
             android:name=".edition.EditionAlarmReceiver"
             android:exported="false" />
+
+        <service
+            android:name=".edition.EditionService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <receiver
             android:name=".edition.RescheduleReceiver"
